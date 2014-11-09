@@ -1,0 +1,24 @@
+{
+  "transporter": {
+    "service": "SendGrid",
+    "auth": {
+      "user": "username",
+      "pass": "password"
+    }
+  },
+  "email": {
+    "name": "John Doe",
+    "from": "john.doe@example.com",
+    "subject": "Secret Santa"
+  },
+  "people": [
+    {
+      "name": "John Smith",
+      "email": "john.smith@example.com"
+    },
+    {
+      "name": "Joe Bloggs",
+      "email": "joe.bloggs@example.com"
+    }
+  ]
+}
