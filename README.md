@@ -1,6 +1,8 @@
 # secret-santa
 
-Given a list of names and email addresses, this small Node.js module takes all of the hassle out of working out secret santa recipients. Simply run the module, and it'll email everyone in the list with their gift recipient.
+Given a list of names and email addresses, this Node.js module takes the hassle out of working out secret santa recipients. Run the module, and it'll email everyone with their gift recipient.
+
+It also ensures that no-one receives themselves as a recipient, and that no recipient has more than one "secret santa".
 
 ## Usage
 
@@ -8,7 +10,7 @@ Firstly, install the dependencies...
 
     npm install
 
-Then, create a `config.json` file in the root of the project and populate it with your configuration options (details below). The module uses [Nodemailer](http://www.nodemailer.com/) and supports all major email services (a list can be found [here](https://github.com/andris9/nodemailer-wellknown#supported-services)).
+Then, create a `config.json` file in the root of the project and populate it with your configuration options (details below). The module uses [Nodemailer](http://www.nodemailer.com/) and supports all major email services (a list of well-known services can be found [here](https://github.com/andris9/nodemailer-wellknown#supported-services)).
 
 In the example `config.json` file below, I'm using [SendGrid's free plan](https://sendgrid.com/user/signup) (up to 200 emails per day).
 
