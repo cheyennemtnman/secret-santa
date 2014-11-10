@@ -7,8 +7,7 @@
     }
   },
   "email": {
-    "name": "John Doe",
-    "from": "john.doe@example.com",
+    "from": "John Doe <john.doe@example.com>",
     "subject": "Secret Santa"
   },
   "people": [
