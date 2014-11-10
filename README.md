@@ -2,11 +2,11 @@
 
 Given a list of names and email addresses, this Node.js module takes the hassle out of working out secret santa recipients. Run the module, and it'll email everyone with their gift recipient.
 
-It also ensures that no-one receives themselves as a recipient, and that no recipient has more than one "secret santa".
+It also ensures that no-one receives themselves as a recipient, and that no recipient has more than one "secret santa". Plus, it's hidden from everyone else!
 
 ## Usage
 
-Firstly, install the dependencies...
+Firstly, install the dependencies:
 
     npm install
 
@@ -39,3 +39,6 @@ In the example `config.json` file below, I'm using [SendGrid's free plan](https:
   ]
 }
 ```
+Once you have your `config.json` file populated, simply run `node index.js`.
+
+:santa:
