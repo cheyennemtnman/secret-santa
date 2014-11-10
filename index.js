@@ -37,7 +37,7 @@ var async = require('async'),
    * Lastly, we use the async library to iterate through the created
    * relationships to construct (and send) an email for each one.
    */
-  async.eachSeries(relationships, function (relationship, callback) {
+  async.each(relationships, function (relationship, callback) {
     var giver = relationship[0],
         receiver = relationship[1],
         email = 'Hi ' + giver.name.split(' ')[0] + ',<br><br>' +
