@@ -1,3 +1,5 @@
+'use strict';
+
 var async = require('async'),
     config = require('./config'),
     nodemailer = require('nodemailer'),
