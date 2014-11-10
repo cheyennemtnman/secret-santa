@@ -7,7 +7,8 @@ var async = require('async'),
 
 (function () {
   var people = Array.prototype.slice.call(config.people),
-      relationships = [];
+      relationships = [],
+      i, j, person;
 
   /*
    * Firstly, we use Sattolo's algorithm to re-order our original array of
@@ -15,9 +16,9 @@ var async = require('async'),
    * the same index as in the original array, ensuring that no-one has
    * themselves as a recipient, and no recipient has more than one santa.
    */
-  for (var i = people.length - 1; i > 0; i--) {
-    var j = ~~(Math.random() * i),
-        person = people[i];
+  for (i = people.length - 1; i > 0; i--) {
+    j = ~~(Math.random() * i);
+    person = people[i];
 
     people[i] = people[j];
     people[j] = person;
@@ -37,19 +38,19 @@ var async = require('async'),
    * relationships to construct (and send) an email for each one.
    */
   async.eachSeries(relationships, function (relationship, callback) {
-    var person = relationship[0],
-        recipient = relationship[1],
-        email = 'Hi ' + person.name.split(' ')[0] + ',<br><br>' +
-                'This year, your secret santa recipient is: <strong>' + recipient.name + '</strong>.<br><br>' +
+    var giver = relationship[0],
+        receiver = relationship[1],
+        email = 'Hi ' + giver.name.split(' ')[0] + ',<br><br>' +
+                'This year, your secret santa recipient is: <strong>' + receiver.name + '</strong>.<br><br>' +
                 'Regards,<br>Santa\'s little helper...';
 
     transporter.sendMail({
       from: config.email.from,
-      to: person.email,
+      to: giver.email,
       subject: config.email.subject,
       html: email
     }, function (err) {
-      console.log('Sending email to ' + person.name + ' (' + person.email + ')...');
+      console.log('Sending email to ' + giver.name + ' (' + giver.email + ')...');
       if (err) {
         return callback(err);
       }
@@ -61,4 +62,4 @@ var async = require('async'),
     }
     console.log('Completed.');
   });
-})();
+}());
