@@ -1,45 +1,62 @@
 var async = require('async'),
-    _ = require('underscore'),
     config = require('./config'),
-    peopleLeft = _.clone(config.people),
     nodemailer = require('nodemailer'),
     transporter = nodemailer.createTransport(config.transporter);
 
-/*
- * A recursive function to work out an appropriate recipient for a gift (when
- * passed a person). It ensures that you don't end up giving a present to
- * yourself, or end up having the same recipient as someone else.
- */
-function getRecipient(person) {
-  var index = Math.floor(Math.random() * peopleLeft.length),
-      recipient = peopleLeft[index];
+(function () {
+  var people = Array.prototype.slice.call(config.people),
+      relationships = [];
 
-  if (recipient.name === person.name) {
-    return getRecipient(person);
+  /*
+   * Firstly, we use Sattolo's algorithm to re-order our original array of
+   * people. The algorithm ensures that no element in the resulting array has
+   * the same index as in the original array, ensuring that no-one has
+   * themselves as a recipient, and no recipient has more than one santa.
+   */
+  for (var i = people.length - 1; i > 0; i--) {
+    var j = ~~(Math.random() * i),
+        person = people[i];
+
+    people[i] = people[j];
+    people[j] = person;
   }
 
-  peopleLeft.splice(index, 1);
-  return recipient;
-}
+  /*
+   * We then form a list of relationships by combining the original array and
+   * the new (random) array. These loops are safe to perform as they contain no
+   * asynchronous code within them.
+   */
+  for (i = 0; i < people.length; i++) {
+    relationships.push([config.people[i], people[i]]);
+  }
 
-/*
- * Loop through the original (config.people) people and, for each one, generate
- * an email with a recipient.
- */
-async.eachSeries(config.people, function (person, callback) {
-  var email = 'Hi ' + person.name.split(' ')[0] + ',<br><br>';
-      email += 'This year, your secret santa recipient is: <strong>' + getRecipient(person).name + '</strong>.<br><br>';
-      email += 'Regards,<br>Santa\'s little helper...';
+  /*
+   * Lastly, we use the async library to iterate through the created
+   * relationships to construct (and send) an email for each one.
+   */
+  async.eachSeries(relationships, function (relationship, callback) {
+    var person = relationship[0],
+        recipient = relationship[1],
+        email = 'Hi ' + person.name.split(' ')[0] + ',<br><br>' +
+                'This year, your secret santa recipient is: <strong>' + recipient.name + '</strong>.<br><br>' +
+                'Regards,<br>Santa\'s little helper...';
 
-  transporter.sendMail({
-    from: config.email.name + ' <' + config.email.from + '>',
-    to: person.email,
-    subject: config.email.subject,
-    html: email
-  }, function (err, info) {
-    console.log('Email sent for ' + person.name + '.');
-    callback();
+    transporter.sendMail({
+      from: config.email.from,
+      to: person.email,
+      subject: config.email.subject,
+      html: email
+    }, function (err) {
+      console.log('Sending email to ' + person.name + ' (' + person.email + ')...');
+      if (err) {
+        return callback(err);
+      }
+      return callback();
+    });
+  }, function (err) {
+    if (err) {
+      throw new Error(err);
+    }
+    console.log('Completed.');
   });
-}, function () {
-  console.log('Completed.');
-});
+})();
